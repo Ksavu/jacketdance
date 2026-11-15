@@ -177,6 +177,45 @@
       color: #ffffff;
     }
 
+    @keyframes pumpGlow {
+      0%, 100% { box-shadow: 0 0 14px rgba(20, 241, 149, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.35); }
+      50% { box-shadow: 0 0 24px rgba(118, 185, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.5); }
+    }
+
+    .btn-pump-tab {
+      background: linear-gradient(135deg, #14F195 0%, #76b900 100%);
+      color: #050806;
+      padding: 7px 14px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 0.03em;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      animation: pumpGlow 2.6s infinite ease-in-out;
+    }
+
+    .btn-pump-tab:hover {
+      transform: translateY(-1px) scale(1.03);
+      filter: brightness(1.08);
+    }
+
+    .btn-pump-tab.prelaunch {
+      background: linear-gradient(135deg, rgba(20, 241, 149, 0.16), rgba(118, 185, 0, 0.18));
+      border: 1px solid rgba(20, 241, 149, 0.5);
+      color: var(--sol-green);
+      animation: none;
+      box-shadow: 0 0 14px rgba(20, 241, 149, 0.15);
+    }
+
+    .btn-pump-tab.prelaunch:hover {
+      background: linear-gradient(135deg, rgba(20, 241, 149, 0.26), rgba(118, 185, 0, 0.28));
+      color: #ffffff;
+    }
+
     .btn-wallet {
       background: linear-gradient(135deg, rgba(153, 69, 255, 0.28), rgba(20, 241, 149, 0.22));
       border: 1px solid rgba(153, 69, 255, 0.6);
@@ -941,6 +980,12 @@
     </div>
 
     <div class="header-actions">
+      <a id="headerPumpBtn" href="https://pump.fun" target="_blank" rel="noopener noreferrer" class="btn btn-pump-tab prelaunch">
+        <span>💊</span>
+        <span id="headerPumpLabel">BUY $JACKET ON PUMP.FUN</span>
+        <span class="mono" style="font-size: 10px;">↗</span>
+      </a>
+
       <button id="copyCaBtn" type="button" class="btn btn-ca mono" title="Contract Address Status">
         <span id="caDisplayText">CA: PENDING LAUNCH</span>
         <span>📋</span>
@@ -1186,10 +1231,10 @@
           <span>⏳ Token Launch Pending: Connect wallet now to lock in your Season 0 OG rank before holder scanning begins.</span>
         </div>
 
-        <!-- Live Pump.fun Buy Bar (Shown once TOKEN_LIVE is flipped to true) -->
-        <a id="buyTokenCtaBar" href="https://pump.fun" target="_blank" rel="noopener noreferrer" class="buy-bar hidden">
-          <span>💊 Hold 100k+ $JACKET to unlock SOL rewards</span>
-          <span class="mono">PUMP.FUN ↗</span>
+        <!-- Pump.fun Buy Tab -->
+        <a id="buyTokenCtaBar" href="https://pump.fun" target="_blank" rel="noopener noreferrer" class="buy-bar">
+          <span id="buyTokenCtaText">💊 Buy $JACKET on Pump.fun (100k+ for SOL Pool)</span>
+          <span class="mono" style="background: rgba(20,241,149,0.2); padding: 3px 8px; border-radius: 7px;">BUY ↗</span>
         </a>
       </div>
     </aside>
@@ -1273,6 +1318,8 @@
 
     const seasonBanner = document.getElementById("seasonBanner");
     const headerSubtitle = document.getElementById("headerSubtitle");
+    const headerPumpBtn = document.getElementById("headerPumpBtn");
+    const headerPumpLabel = document.getElementById("headerPumpLabel");
     const copyCaBtn = document.getElementById("copyCaBtn");
     const caDisplayText = document.getElementById("caDisplayText");
     const soundToggleBtn = document.getElementById("soundToggleBtn");
@@ -1345,10 +1392,13 @@
         ? `https://pump.fun/coin/${CONFIG.CONTRACT_ADDRESS}`
         : CONFIG.PUMP_FUN_URL;
 
+      headerPumpBtn.href = pumpUrl;
       buyTokenCtaBar.href = pumpUrl;
       gameOverBuyLink.href = pumpUrl;
 
       if (!CONFIG.TOKEN_LIVE) {
+        headerPumpBtn.classList.add("prelaunch");
+        headerPumpLabel.textContent = "PUMP.FUN LAUNCH";
         caDisplayText.textContent = "CA: PENDING LAUNCH";
         headerSubtitle.textContent = "SEASON 0 PRE-LAUNCH • 100,000 H200s";
         poolStatusPill.textContent = "Pending Token Launch";
@@ -1356,9 +1406,11 @@
         poolAmountDisplay.innerHTML = `0.00 SOL <span style="display: block; font-size: 11px; color: var(--vip-gold); font-weight: 700;">(Starts at Launch)</span>`;
         lbSectionTitle.textContent = "🏆 Season 0 OG Leaderboard";
         preLaunchInfoBar.classList.remove("hidden");
-        buyTokenCtaBar.classList.add("hidden");
+        buyTokenCtaBar.classList.remove("hidden");
       } else {
         seasonBanner.classList.add("hidden");
+        headerPumpBtn.classList.remove("prelaunch");
+        headerPumpLabel.textContent = "BUY $JACKET ON PUMP.FUN";
         caDisplayText.textContent = "CA: " + shortAddr(CONFIG.CONTRACT_ADDRESS);
         headerSubtitle.textContent = "LIVE ON PUMP.FUN • 100,000 H200s";
         poolStatusPill.textContent = "Holder Scanning Live";
@@ -1366,6 +1418,7 @@
         poolAmountDisplay.innerHTML = `${CONFIG.REWARD_POOL_SOL}`;
         lbSectionTitle.textContent = "🏆 Verified Holder Leaderboard";
         preLaunchInfoBar.classList.add("hidden");
+        buyTokenCtaBar.classList.remove("hidden");
       }
     }
 
@@ -1618,11 +1671,7 @@
           : `Connect wallet to scan ${CONFIG.TOKEN_TICKER} balance • Local Best: ${bestFinal.toLocaleString()} PTS`;
       }
 
-      if (CONFIG.TOKEN_LIVE && (!connectedWallet || !tier.eligible)) {
-        buyTokenCtaBar.classList.remove("hidden");
-      } else {
-        buyTokenCtaBar.classList.add("hidden");
-      }
+      buyTokenCtaBar.classList.remove("hidden");
     }
 
     function renderLeaderboard() {
