@@ -257,6 +257,12 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      text-decoration: none;
+    }
+
+    .btn-icon:hover {
+      border-color: var(--sol-green);
+      background: rgba(255, 255, 255, 0.1);
     }
 
     .btn-nvidia {
@@ -996,6 +1002,10 @@
         <span id="walletBtnLabel">Connect Wallet</span>
       </button>
 
+      <a id="headerXLink" href="https://x.com/jacketdanceoff" target="_blank" rel="noopener noreferrer" class="btn btn-icon" aria-label="Official X (Twitter)" title="Follow @jacketdanceoff on X" style="font-weight: 900; font-size: 14px;">
+        𝕏
+      </a>
+
       <button id="soundToggleBtn" type="button" class="btn btn-icon" aria-label="Toggle Audio" title="Mute / Unmute Synthwave Beat">
         🔊
       </button>
@@ -1236,6 +1246,12 @@
           <span id="buyTokenCtaText">💊 Buy $JACKET on Pump.fun (100k+ for SOL Pool)</span>
           <span class="mono" style="background: rgba(20,241,149,0.2); padding: 3px 8px; border-radius: 7px;">BUY ↗</span>
         </a>
+
+        <!-- Official X Link -->
+        <a href="https://x.com/jacketdanceoff" target="_blank" rel="noopener noreferrer" class="buy-bar" style="background: rgba(255, 255, 255, 0.04); border-color: rgba(255, 255, 255, 0.16); color: #e4e4e7;">
+          <span>𝕏 Follow @jacketdanceoff for 6h Pool Winners &amp; CA</span>
+          <span class="mono" style="background: rgba(255,255,255,0.08); padding: 3px 8px; border-radius: 7px;">X.COM ↗</span>
+        </a>
       </div>
     </aside>
   </main>
@@ -1294,6 +1310,7 @@
       VIP_MULTIPLIER: 2.0, // 2x VIP Score Boost for 1M+ holders
       SOLANA_RPC_URL: "https://api.mainnet-beta.solana.com",
       PUMP_FUN_URL: "https://pump.fun",
+      X_URL: "https://x.com/jacketdanceoff",
       REWARD_POOL_SOL: "0.00 SOL (Starts at Launch)"
     };
 
